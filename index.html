@@ -1,0 +1,454 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta http-equiv="Content-Security-Policy" content="default-src * data:; style-src * 'unsafe-inline'; script-src * 'unsafe-inline' 'unsafe-eval'">
+    <script src="components/loader.js"></script>
+    <script src="lib/onsenui/js/onsenui.min.js"></script>
+    <script src="lib/onsenui/js/jquery-3.1.0.min.js"></script>
+
+
+    <link rel="stylesheet" href="components/loader.css">
+    <link rel="stylesheet" href="lib/onsenui/css/onsenui.css">
+    <link rel="stylesheet" href="lib/onsenui/css/onsen-css-components.css">
+    <link rel="stylesheet" href="css/style.css">
+<style>
+  .sub_line_item {
+    font-size: .7em;
+    font-style: italic;
+    color: #333;
+    display:block;
+  }
+</style>
+    <script>
+        ons.ready(function() {
+            console.log("Onsen UI is ready!!!!");
+
+        });
+
+
+document.addEventListener('init', function(event) {
+  var page = event.target;
+  if (page.id === 'page1') {
+    page.querySelector('#push-button').onclick = function() {
+      document.querySelector('#myNavigator').pushPage('page2.html', {data: {title: 'Events'}});
+      //document.querySelector('#myNavigator').pushPage('page2.html');
+    };
+  } else if (page.id === 'page2') {
+    //alert('here');
+    page.querySelector('ons-toolbar .center').innerHTML = page.data.title;
+    //document.querySelector('#myNavigator').pushPage('page1.html');
+  }
+
+
+
+
+if (page.id === 'page1') {
+page.querySelector('#loadData').onclick = function() {
+  $('#spinner').show();
+  $('#loadData').text('Loading...');
+  $('#first_name, #last_name, #member_type, #expire_date, #ski_eligable, #valid_dob, #is_minor, #ski_age').html('');
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+  if (xhttp.readyState == 4 && xhttp.status == 200) { // 200 indicates success
+
+      //xmlDoc = xhttp.responseXML; // get as XML object THIS VARIABLE HOLDS THE RESPONSE FROM THE XMLHttpRequrest
+      var xmlDoc = jQuery.parseXML(xhttp.responseText); // GET response as text and create xml object
+      //alert((new XMLSerializer()).serializeToString(xmlDoc));
+      //alert(xhttp.responseText);
+      var memberFound=xmlDoc.getElementsByTagName("MemberFound")[0].childNodes[0].nodeValue;
+
+      if (memberFound.toLowerCase() != 'no'){
+          // Next several lines populates javascript variables from the responseXML
+          usaws_r = "";
+          fname_r = "";
+          lname_r = "";
+          member_type = "";
+          expire_date = "";
+          ski_eligable_r = "";
+          valid_dob_r = "";
+          is_minor_r = "";
+          var usaws_r=xmlDoc.getElementsByTagName("MemberID")[0].childNodes[0].nodeValue;
+          var fname_r=xmlDoc.getElementsByTagName("MemberFirst")[0].childNodes[0].nodeValue;
+          var lname_r=xmlDoc.getElementsByTagName("MemberLast")[0].childNodes[0].nodeValue;
+          var member_type_r=xmlDoc.getElementsByTagName("MembershipType")[0].childNodes[0].nodeValue;
+          var expire_r=xmlDoc.getElementsByTagName("MemberExpireDate")[0].childNodes[0].nodeValue;
+          var ski_eligable_r=xmlDoc.getElementsByTagName("CanSkiTour")[0].childNodes[0].nodeValue;
+          var valid_dob_r=(xmlDoc.getElementsByTagName("DOB_validated")[0].childNodes[0]) ? (xmlDoc.getElementsByTagName("DOB_validated")[0].childNodes[0].nodeValue) : '';
+          var is_minor_r=(xmlDoc.getElementsByTagName("Minor")[0].childNodes[0]) ? (xmlDoc.getElementsByTagName("Minor")[0].childNodes[0].nodeValue) : '';
+          var ski_age_r=xmlDoc.getElementsByTagName("MembAge")[0].childNodes[0].nodeValue;
+
+
+          // And this jQuery populates the form elements with the variables from above
+          /*
+          $('input[name="user_login"]').val(usaws_r);
+          $('input[name="user_login"]').attr("disabled", "disabled");
+          $('#edit_usaws').show();
+
+          $('#first_name').show();
+          $('#last_name').show();
+          $('#expire_date').show();
+          $('#member_type').show();
+          $('#ski_eligable').show();
+          $('#valid_dob').show();
+          $('#is_minor').show();
+          $('#ski_age').show();
+          */
+          $('#first_name').html('<b>First Name:</b>' + fname_r);
+          $('#last_name').html('<b>Last Name:</b>' + lname_r);
+          $('#member_type').html('<b>USAWS Member Type:</b>' + member_type_r);
+          $('#expire_date').html('<b>USAWS Expire Date:</b>' + expire_r);
+          $('#ski_eligable').html('<b>Eligable to ski:</b>' + ski_eligable_r);
+          if (valid_dob_r.length>0) { $('#valid_dob').html('<b>Valid DOB:</b>' + valid_dob_r) }
+          $('#is_minor').html('<b>Minor:</b>' + is_minor_r);
+          $('#ski_age').html('<b>Age:</b>' + ski_age_r);
+          //$('#request_data').hide();
+          $('#spinner').hide();
+          $('#loadData').text('Load Data');
+        } else {
+          // DISPLAY MEMBER NOT FOUND MESSAGE
+          $('#first_name').html('<b>NOT FOUND:</b>' + fname_r);
+          $('#spinner').hide();
+          $('#loadData').text('Load Data');
+          /*
+          $('#member_found').show();
+          $('#member_found').html('<span style="color:#f00">Member Not Found. Re-enter USAWS ID.</span>');
+          */
+        }
+      } // END IF READYSTATE 4 and STATUS 200
+    }; // END xhttp.onreadystatechange
+
+ //JS VERSION OF SETTING TODAYS DATE
+    var today = new Date();
+    var dd = today.getDate();
+    var mm = today.getMonth()+1; //January is 0!
+    var yyyy = today.getFullYear();
+    if(dd<10) { dd='0'+dd }
+    if(mm<10) {mm='0'+mm }
+    today = mm+'/'+dd+'/'+yyyy;
+    console.log(today);
+  // THE BELOW WORKS for sending as string via application/x-www-form-urlencoded which is a typical post type
+  // BELOW gets the usaws variable put in by the user and sends the request via XMLHttpRequrest
+  var memberID = $('input[name="usaws_id"]').val();
+  var memberDOB='02/28/1969';
+  //var memberMinorByDate='<?php echo date('m/d/Y'); ?>';
+  var memberMinorByDate=today;//'03/01/2023';
+  //var memberMinorByDate='12/31/2015'; //<IsMinor_AsOf_Date>"+memberMinorByDate+"</IsMinor_AsOf_Date>
+
+  if (memberID.length==9) {
+    theRequest="<USAWaterski><MemberStatus><ClubAccessCode>WPB001</ClubAccessCode><MemberID>"+memberID+"</MemberID><Member_DOB_ForValidation>"+memberDOB+"</Member_DOB_ForValidation><IsMinor_AsOf_Date>"+memberMinorByDate+"</IsMinor_AsOf_Date></MemberStatus></USAWaterski>";
+    xhttp.open("POST", "http://www.okeeski.com/members/curl_proxy.php", true);
+    xhttp.send(theRequest);
+  } else {
+    $('#first_name').html('<b>Invalid number</b>' + fname_r);
+    /*
+    $('#member_found').html('<span style="color:#f00">9 digit USA Water Ski Number required.</span>');
+    $('#member_found').show();
+*/
+    //alert('invalid data');
+    $('#spinner').hide();
+    $('#loadData').text('Load Data');
+    return false;
+  }
+};
+
+}
+
+});
+
+</script>
+
+<script>
+// AJAX CALL TO GET EVENTS
+//ons.ready(function() {
+$(document).ready(function(){
+//	function checkForExistingMember(thisMember,popDiv,num) {
+		var returnMessage = ""; // Global scope
+	$("#jsonReturnDiv").html('Retrieving data...');
+	$.ajax({url:"http://www.okeeski.com/members/get_tourneys_json.php",data:{ events: 'events'},type:'POST', dataType: 'json',success:function(json_Obj) {
+
+    // SET THE NEXT UPCOMING EVENT ON THE START PAGE
+
+    var today = new Date();
+var dd = today.getDate();
+var mm = today.getMonth()+1; //January is 0!
+
+var yyyy = today.getFullYear();
+if(dd<10){
+    dd='0'+dd
+}
+if(mm<10){
+    mm='0'+mm
+}
+var today = mm+'/'+dd+'/'+yyyy;
+//alert(today);
+
+    var nextEvent = "<div id='upEvt'>Upcoming Events</div>";
+    var x=1;
+    for(j = 0; j < json_Obj.length; j++) {
+      if (today < json_Obj[j].start_date && x < 4) {
+        //for(h = 0; h < 1; h++) {
+          var date = new Date(json_Obj[j].start_date);
+          var d = date.toDateString();
+          nextEvent  += "<div class='eventItem'><div><b>" + d + "</b></div>";
+          nextEvent  += "<div>" + json_Obj[j].post_title + "</div></div>";
+          x++;
+        //}
+      }
+
+    }
+      /*
+      if (json_Obj[0].start_date.localeCompare(json_Obj[0].end_date) === 0 )   {
+          nextEvent += "<div>" + json_Obj[0].start_date + "<div>" + json_Obj[0].start_time + " - " + json_Obj[0].end_time + "</div></div>";
+      } else {
+          nextEvent += "<div>" + json_Obj[0].start_date + " - " + json_Obj[0].start_date + "<div>" + json_Obj[0].start_time + " - " + json_Obj[0].end_time + "</div></div>";
+      }
+      */
+        $("#nextEvent").html(nextEvent);
+    //  }
+    //}, false);
+    //$('#nextEvent').text="event";
+    //alert("event is " + $('#nextEvent').text() );
+
+    returnMessage = 'SUCCESS.';
+
+      var out = "<ons-list>";
+      var i;
+      for(i = 0; i < json_Obj.length; i++) {
+          out += '<ons-list-item><span class="list__item__title">' + json_Obj[i].post_title + '</span>';
+          out += '<span class="list__item__subtitle">' + json_Obj[i].start_date;
+          //console.log(json_Obj[i].start_date + ' ' + json_Obj[i].end_date);
+          //console.log(json_Obj[i].start_date.localeCompare(json_Obj[i].end_date ) );
+          if (json_Obj[i].start_date.localeCompare(json_Obj[i].end_date) === 0 )   {
+            //alert(json_Obj[i].start_date.localeCompare(json_Obj[i].end_date));
+            out += ' - ' + json_Obj[i].end_date;// + '</span>';
+            //console.log("NOT 0 " + json_Obj[i].start_date.localeCompare(json_Obj[i].end_date));
+          } else {
+            //alert(' IN 0');
+            //out += '</span>';
+            //console.log("IS 0 " + json_Obj[i].start_date.localeCompare(json_Obj[i].end_date));
+          }
+          out += ' <i>(' + json_Obj[i].start_time + ' - ' + json_Obj[i].end_time + ')</i></span></ons-list-item>';
+          /*
+          if (json_Obj[i].post_content != null) {
+            str=json_Obj[i].post_content;
+          } else { str='';
+          }
+          out += '<i>' + str.replace(/\[[^)]+\]/,"") + '</i><p>'; // Remove all [ ] bracket characters from the [button shortcode]
+*/
+          //out += 'Location: ' + arr[i].location + '<br>';
+
+      }
+      out +="</ons-list>";
+      document.addEventListener("init", function(event) {
+        if (event.target.id == "page2") { // THIS enables scope for the page.
+          document.getElementById("jsonReturnDiv").innerHTML = out;
+        }
+      }, false);
+      //document.getElementById("demo").innerHTML = out;
+
+		}, error: function(json_Obj){
+					document.getElementById("jsonReturnDiv").innerHTML = 'ERROR.';
+				//return false;
+		}, complete: function(json_Obj){
+				if ( (typeof returnMessage == "undefined" || returnMessage=='') ) {
+		        document.getElementById("jsonReturnDiv").innerHTML = 'NO DATA RETURNED.';
+				} else {
+					console.log(returnMessage);
+				}
+	}})
+//}
+
+});
+
+
+
+
+</script>
+
+
+
+
+<!-- FOR WEATHER DATA -->
+<script language="javascript" type="text/javascript">
+<!--
+//Browser Support Code : FOR OKEE WEATHER STATION DATA
+function ajaxFunction(){
+	var ajaxRequest;  // The variable that makes Ajax possible!
+
+	try{
+		// Opera 8.0+, Firefox, Safari
+		ajaxRequest = new XMLHttpRequest();
+	} catch (e){
+		// Internet Explorer Browsers
+		try{
+			ajaxRequest = new ActiveXObject("Msxml2.XMLHTTP");
+		} catch (e) {
+			try{
+				ajaxRequest = new ActiveXObject("Microsoft.XMLHTTP");
+			} catch (e){
+				// Something went wrong
+				alert("Your browser broke!");
+				return false;
+			}
+		}
+	}
+
+// Create a function that will receive data sent from the server
+ajaxRequest.onreadystatechange = function(){
+	if(ajaxRequest.readyState == 4){
+		document.getElementById('okeeWeather').innerHTML = ajaxRequest.responseText;
+		//document.myForm.time.value = ajaxRequest.responseText;
+	}
+}
+ajaxRequest.open("GET", "http://www.okeeski.com/data/scpbajax_datacall.php", true);
+ajaxRequest.send(null);
+
+}
+
+	self.onload=ajaxFunction();
+	self.setInterval(function(){ajaxFunction()},4000);
+
+
+</script>
+<!-- END FOR WEATHER DATA -->
+<style>
+#clubName {
+  color:#fff;
+  font-family:serif;
+  font-style: italic;
+  font-weight: bold;
+  font-size: 1.8em;
+  text-align: center;
+  background-color: rgba(24,103,194,0.40);
+  border-bottom: 1px solid rgba(24,103,194,0.80);
+  padding:.4em 0 .4em 0;
+  text-shadow: .05em .05em #000000;
+}
+#clubLogo {
+  position: absolute;
+  bottom: 0;
+  left:0;
+  width:100%;
+  opacity:0.1;
+  display:inline-block;
+  z-index: -1;
+}
+#usaws_lookup {
+  display:none;
+}
+#upEvt {
+  font-family:sans-serif;
+  font-size: 1.1em;
+  color: #fff;
+  margin-top:1.2em 0 .5em 0;
+  background-color: rgba(24,103,194,0.81);
+  padding: .6em 0 .6em 0;
+}
+.eventItem {
+  background-color: rgba(24,103,194,0.10);
+  padding:.2em;
+  border-bottom: 1px solid rgba(24,103,194,0.80);
+}
+#okeeWeather {
+  font-family: sans-serif;
+  font-variant: small-caps;
+  font-size: 1.1em;
+  font-weight: bold;
+  color: #555;
+  margin:0 0 .5em 0;
+}
+#push-button {
+  margin-top:.8em;
+}
+
+#airF, #waterF, #windS, #windD {
+  display:inline-block;
+  padding:0 .3em 0 0;
+}
+</style>
+</head>
+<body>
+
+
+<ons-navigator id="myNavigator"  animation="slide" page="page1.html"></ons-navigator>
+
+<!--
+<ons-tabbar>
+  <ons-tab label="Tab 1" page="page1.html" active></ons-tab>
+  <ons-tab label="Tab 2" page="page2.html"></ons-tab>
+</ons-tabbar>
+-->
+
+<ons-template id="page1.html">
+  <ons-page id="page1">
+
+    <!--<ons-toolbar>
+      <div class="center">Page 1</div>
+    </ons-toolbar>-->
+
+  <div id='clubName'>Ski Club of the Palm Beaches</div>
+    <div style="text-align: center; margin-top: 30px;">
+      <!-- BELOW CODE IS FOR USAWS LOOKUP SERVICE -->
+    <div id='usaws_lookup'>
+    <form>
+      <ons-input name='usaws_id' id='usaws_id' placeholder="USA Water Ski ID"  maxlength="9" modifier="underbar" float />
+    </form>
+  </p>
+  <p style="margin-top: 30px;">
+    <ons-button id='loadData'>Load Data</ons-button>
+  </p>
+  </div>
+    <div id='usaws_results'>
+      <div id='spinner' style='display:none;'><ons-progress-bar indeterminate></ons-progress-bar></div>
+      <div id='first_name'></div>
+      <div id='last_name'></div>
+      <div id='expire_date'></div>
+      <div id='member_type'></div>
+      <div id='ski_eligable'></div>
+      <div id='valid_dob'></div>
+      <div id='is_minor'></div>
+      <div id='ski_age'></div>
+    </div>
+
+  <div id='okeeWeather'></div>
+
+    <div id='nextEvent'></div>
+    <ons-button id="push-button">More 2016 Events</ons-button>
+
+
+    </div>
+    <img src='images/club_logo.png' id='clubLogo' />
+  </ons-page>
+</ons-template>
+
+<ons-template id="page2.html">
+  <ons-page id="page2">
+    <ons-toolbar>
+      <div class="left"><ons-back-button></ons-back-button></div>
+      <div class="center">Page 2</div>
+    </ons-toolbar>
+
+    <ons-list-header>Schedule of Events</ons-list-header>
+
+      <div id='jsonReturnDiv'></div>
+      <!--<div id='usaws_id_family0' class='rightCell'><button type="button" id='request_data'  data-mini='true' onclick="checkForExistingMember('700109164','#jsonReturnDiv',1)">Validate USAWS #</button>
+      </div>-->
+
+
+
+  </ons-page>
+
+</ons-template>
+
+
+
+<script>
+
+
+
+</script>
+
+</body>
+</html>
