@@ -507,6 +507,14 @@ function checkConnection() {
 
 checkConnection();
 
+document.addEventListener("deviceready", onDeviceReady, false);
+function onDeviceReady() {
+  var model = device.model;
+  var plat = device.platform;
+  var uuid = device.uuid;
+  var vers = device.version;
+  console.log(device.cordova);
+}
 
 
 </script>
