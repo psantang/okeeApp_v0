@@ -164,6 +164,12 @@
             //  } // END ONLINE READY
 //          }); // END DOCUMENT.READY
         } //END FUNCTION onOnline
+
+    if (navigator.connection.type.toLowerCase() != 'none') {
+      onOnline();
+    } else {
+      onOffline();
+    }
 } // END onDeviceReady
 
 
