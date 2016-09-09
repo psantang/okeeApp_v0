@@ -22,11 +22,164 @@
   }
 </style>
     <script>
+
+    document.addEventListener("deviceready", onDeviceReady, false);
+    function onDeviceReady() {
+      /*
+      var model = device.model;
+      var plat = device.platform;
+      var uuid = device.uuid;
+      var vers = device.version;
+      console.log(device.cordova);
+      */
+      // HANDLE DEVICE BEING OFFLINE/NO NETWORK CONNECTION
+              document.addEventListener("offline", onOffline, false);
+              document.addEventListener("online", onOnline, false);
+
+              function onOffline() {
+                  // Handle the offline event
+                  $("#nextEvent").html("THIS IS OFFLINE <b>CONTENT.</b>");
+              }
+
+
+
+
+
+
+
+              function onOnline() {
+                  // Handle the online event
+
+              $(document).ready(function(){
+              //	function checkForExistingMember(thisMember,popDiv,num) {
+              		var returnMessage = ""; // Global scope
+              	$("#jsonReturnDiv").html('Retrieving data...');
+              	$.ajax({url:"http://www.okeeski.com/members/get_tourneys_json.php",data:{ events: 'events'},type:'POST', dataType: 'json',success:function(json_Obj) {
+
+              // SET THE NEXT UPCOMING EVENT ON THE START PAGE
+              var date = new Date();
+
+              date.setDate(date.getDate() - 1);
+
+              //var today = new Date();
+              var dd = date.getDate();
+              //console.log(today);
+              var mm = date.getMonth()+1; //January is 0!
+              //console.log(dd);
+              var yyyy = date.getFullYear();
+              if(dd<10){
+                  dd='0'+dd
+              }
+              if(mm<10){
+                  mm='0'+mm
+              }
+              var today = mm+'/'+dd+'/'+yyyy;
+
+                  var nextEvent = "<div id='upEvt'>Upcoming Events</div>";
+                  var x=1;
+                  for(j = 0; j < json_Obj.length; j++) {
+                    if (today < json_Obj[j].start_date && x < 4) {
+                        var date = new Date(json_Obj[j].start_date);
+                        var d = date.toDateString();
+                        nextEvent  += "<div class='eventItem'><div><b>" + d + "</b></div>";
+                        nextEvent  += "<div>" + json_Obj[j].post_title + "</div>";
+                        nextEvent  += "</div>";
+                        x++;
+                    } // END IF
+                  } // END FOR LOOP
+                  $("#nextEvent").html(nextEvent);
+                  returnMessage = 'SUCCESS.';
+
+                    var out = "<ons-list>";
+                        out += "<ons-list-header>Schedule of Events</ons-list-header>";
+                    var i;
+                    for(i = 0; i < json_Obj.length; i++) {
+                      //console.log(json_Obj[i].event_type);
+                        out += '<ons-list-item modifier="tappable" category="'+json_Obj[i].event_type+'">';
+
+                        var icon='';
+                        if (json_Obj[i].event_type=='slalom') icon='images/slalom.jpg';//'images/work.jpg'
+                        else if (json_Obj[i].event_type=='3event') icon='images/3event.png';
+                        else if (json_Obj[i].event_type=='meeting') icon='images/meeting.png';
+                        else if (json_Obj[i].event_type=='work') icon='images/work.png';
+                        else if (json_Obj[i].event_type=='clinic') icon='images/clinic.png';
+                        else icon='images/null.png';
+
+                        out += '<div class="left">';
+                        //out += icon;
+                        //out += '<img class="list__item__thumbnail" src="images/work.jpg">';
+                        out += '<img class="list__item__thumbnail" src="' + icon + '">';
+                        //console.log('<img class="list__item__thumbnail" src="'+icon+'">');
+                        out += '</div>';
+
+                        out += '<div class="center">';
+                        out += '<span class="list__item__title">' + json_Obj[i].post_title + '</span>';
+                        out += '<span class="list__item__subtitle">' + json_Obj[i].start_date;
+                        //console.log(json_Obj[i].start_date + ' ' + json_Obj[i].end_date);
+                        //console.log(json_Obj[i].start_date.localeCompare(json_Obj[i].end_date ) );
+                        if (json_Obj[i].start_date.localeCompare(json_Obj[i].end_date) === 0 )   {
+                          //alert(json_Obj[i].start_date.localeCompare(json_Obj[i].end_date));
+                          out += ' - ' + json_Obj[i].end_date;// + '</span>';
+                          //console.log("NOT 0 " + json_Obj[i].start_date.localeCompare(json_Obj[i].end_date));
+                        } else {
+                          //alert(' IN 0');
+                          //out += '</span>';
+                          //console.log("IS 0 " + json_Obj[i].start_date.localeCompare(json_Obj[i].end_date));
+                        }
+                        out += ' <i>(' + json_Obj[i].start_time + ' - ' + json_Obj[i].end_time + ')</i></span>';
+                        if (json_Obj[i].link != '' ) {
+                          out += '<div><ons-button><a target="blank" style="text-decoration: none;color:#fff;" href="' + json_Obj[i].link + '">Register</a></ons-button></div>';
+                        }
+                        out += '</div>';
+                        if (json_Obj[i].post_content != null) {
+                          str=json_Obj[i].post_content;
+                          //out += '<i>' + str.replace(/\[[^)]+\]/,"") + '</i><p>';
+                          out += '<div style="display:none;">' + str.replace(/\[[^)]+\]/,"") + '</div>';
+                        } else {
+                          str='';
+                        }
+                        out += '</ons-list-item>';
+                    } // END FOR LOOP
+                    out +="</ons-list>";
+                    document.addEventListener("init", function(event) {
+                      if (event.target.id == "page2") { // THIS enables scope for the page.
+                        document.getElementById("jsonReturnDiv").innerHTML = out;
+                      }
+                    }, false);
+                    //document.getElementById("demo").innerHTML = out;
+
+              		}, // END AJAX SUCCESS
+                  error: function(json_Obj){
+              					document.getElementById("jsonReturnDiv").innerHTML = 'ERROR.';
+              				//return false;
+              		}, // END AJAX ERROR
+                  complete: function(json_Obj){
+              				if ( (typeof returnMessage == "undefined" || returnMessage=='') ) {
+              		        document.getElementById("jsonReturnDiv").innerHTML = 'NO DATA RETURNED.';
+              				} else {
+              					console.log(returnMessage);
+              				}
+              	} // END AJAX COMPLETE
+              }); // END AJAX REQUEST OBJECT
+            //  } // END ONLINE READY
+          }); // END DOCUMENT.READY
+        } //END FUNCTION onOnline
+} // END onDeviceReady
+
+
+
+
+
+
+
+
+
+
         ons.ready(function() {
             console.log("Onsen UI is ready!!!!");
 
         });
-
+//}
 
 
 document.addEventListener('init', function(event) {
@@ -163,147 +316,7 @@ page.querySelector('#loadData').onclick = function() {
 <script>
 // AJAX CALL TO GET EVENTS
 //ons.ready(function() {
-$(document).ready(function(){
-//	function checkForExistingMember(thisMember,popDiv,num) {
-		var returnMessage = ""; // Global scope
-	$("#jsonReturnDiv").html('Retrieving data...');
-	$.ajax({url:"http://www.okeeski.com/members/get_tourneys_json.php",data:{ events: 'events'},type:'POST', dataType: 'json',success:function(json_Obj) {
 
-    // SET THE NEXT UPCOMING EVENT ON THE START PAGE
-    var date = new Date();
-
-    //console.log(date) ; //# => Fri Apr 01 2011 11:14:50 GMT+0200 (CEST)
-
-    date.setDate(date.getDate() - 1);
-    //console.log(yesterday) ;
-
-    //var today = new Date();
-var dd = date.getDate();
-//console.log(today);
-var mm = date.getMonth()+1; //January is 0!
-//console.log(dd);
-var yyyy = date.getFullYear();
-if(dd<10){
-    dd='0'+dd
-}
-if(mm<10){
-    mm='0'+mm
-}
-var today = mm+'/'+dd+'/'+yyyy;
-//alert(today);
-
-    var nextEvent = "<div id='upEvt'>Upcoming Events</div>";
-    var x=1;
-    for(j = 0; j < json_Obj.length; j++) {
-      if (today < json_Obj[j].start_date && x < 4) {
-        //for(h = 0; h < 1; h++) {
-          var date = new Date(json_Obj[j].start_date);
-          var d = date.toDateString();
-          nextEvent  += "<div class='eventItem'><div><b>" + d + "</b></div>";
-          nextEvent  += "<div>" + json_Obj[j].post_title + "</div>";
-          nextEvent  += "</div>";
-          //nextEvent  += "<div>" + json_Obj[j].event_type + "</div></div>";
-          x++;
-        //}
-      }
-
-    }
-      /*
-      if (json_Obj[0].start_date.localeCompare(json_Obj[0].end_date) === 0 )   {
-          nextEvent += "<div>" + json_Obj[0].start_date + "<div>" + json_Obj[0].start_time + " - " + json_Obj[0].end_time + "</div></div>";
-      } else {
-          nextEvent += "<div>" + json_Obj[0].start_date + " - " + json_Obj[0].start_date + "<div>" + json_Obj[0].start_time + " - " + json_Obj[0].end_time + "</div></div>";
-      }
-      */
-        $("#nextEvent").html(nextEvent);
-    //  }
-    //}, false);
-    //$('#nextEvent').text="event";
-    //alert("event is " + $('#nextEvent').text() );
-
-    returnMessage = 'SUCCESS.';
-
-      var out = "<ons-list>";
-          out += "<ons-list-header>Schedule of Events</ons-list-header>";
-      var i;
-      for(i = 0; i < json_Obj.length; i++) {
-        //console.log(json_Obj[i].event_type);
-          out += '<ons-list-item modifier="tappable" category="'+json_Obj[i].event_type+'">';
-
-          var icon='';
-          if (json_Obj[i].event_type=='slalom') icon='images/slalom.jpg';//'images/work.jpg'
-          else if (json_Obj[i].event_type=='3event') icon='images/3event.png';
-          else if (json_Obj[i].event_type=='meeting') icon='images/meeting.png';
-          else if (json_Obj[i].event_type=='work') icon='images/work.png';
-          else if (json_Obj[i].event_type=='clinic') icon='images/clinic.png';
-          else icon='images/null.png';
-
-          out += '<div class="left">';
-          //out += icon;
-          //out += '<img class="list__item__thumbnail" src="images/work.jpg">';
-          out += '<img class="list__item__thumbnail" src="' + icon + '">';
-          //console.log('<img class="list__item__thumbnail" src="'+icon+'">');
-          out += '</div>';
-
-          out += '<div class="center">';
-          out += '<span class="list__item__title">' + json_Obj[i].post_title + '</span>';
-          out += '<span class="list__item__subtitle">' + json_Obj[i].start_date;
-          //console.log(json_Obj[i].start_date + ' ' + json_Obj[i].end_date);
-          //console.log(json_Obj[i].start_date.localeCompare(json_Obj[i].end_date ) );
-          if (json_Obj[i].start_date.localeCompare(json_Obj[i].end_date) === 0 )   {
-            //alert(json_Obj[i].start_date.localeCompare(json_Obj[i].end_date));
-            out += ' - ' + json_Obj[i].end_date;// + '</span>';
-            //console.log("NOT 0 " + json_Obj[i].start_date.localeCompare(json_Obj[i].end_date));
-          } else {
-            //alert(' IN 0');
-            //out += '</span>';
-            //console.log("IS 0 " + json_Obj[i].start_date.localeCompare(json_Obj[i].end_date));
-          }
-          out += ' <i>(' + json_Obj[i].start_time + ' - ' + json_Obj[i].end_time + ')</i></span>';
-          if (json_Obj[i].link != '' ) {
-            out += '<div><ons-button><a target="blank" style="text-decoration: none;color:#fff;" href="' + json_Obj[i].link + '">Register</a></ons-button></div>';
-          }
-          out += '</div>';
-          if (json_Obj[i].post_content != null) {
-            str=json_Obj[i].post_content;
-            //out += '<i>' + str.replace(/\[[^)]+\]/,"") + '</i><p>';
-            out += '<div style="display:none;">' + str.replace(/\[[^)]+\]/,"") + '</div>';
-          } else {
-            str='';
-          }
-
-          out += '</ons-list-item>';
-          /*
-          if (json_Obj[i].post_content != null) {
-            str=json_Obj[i].post_content;
-          } else { str='';
-          }
-          out += '<i>' + str.replace(/\[[^)]+\]/,"") + '</i><p>'; // Remove all [ ] bracket characters from the [button shortcode]
-*/
-          //out += 'Location: ' + arr[i].location + '<br>';
-
-      }
-      out +="</ons-list>";
-      document.addEventListener("init", function(event) {
-        if (event.target.id == "page2") { // THIS enables scope for the page.
-          document.getElementById("jsonReturnDiv").innerHTML = out;
-        }
-      }, false);
-      //document.getElementById("demo").innerHTML = out;
-
-		}, error: function(json_Obj){
-					document.getElementById("jsonReturnDiv").innerHTML = 'ERROR.';
-				//return false;
-		}, complete: function(json_Obj){
-				if ( (typeof returnMessage == "undefined" || returnMessage=='') ) {
-		        document.getElementById("jsonReturnDiv").innerHTML = 'NO DATA RETURNED.';
-				} else {
-					console.log(returnMessage);
-				}
-	}})
-//}
-
-});
 
 
 
