@@ -169,12 +169,19 @@ $(document).ready(function(){
 	$.ajax({url:"http://www.okeeski.com/members/get_tourneys_json.php",data:{ events: 'events'},type:'POST', dataType: 'json',success:function(json_Obj) {
 
     // SET THE NEXT UPCOMING EVENT ON THE START PAGE
+    var date = new Date();
 
-    var today = new Date();
-var dd = today.getDate();
-var mm = today.getMonth()+1; //January is 0!
+    //console.log(date) ; //# => Fri Apr 01 2011 11:14:50 GMT+0200 (CEST)
 
-var yyyy = today.getFullYear();
+    date.setDate(date.getDate() - 1);
+    //console.log(yesterday) ;
+
+    //var today = new Date();
+var dd = date.getDate();
+//console.log(today);
+var mm = date.getMonth()+1; //January is 0!
+//console.log(dd);
+var yyyy = date.getFullYear();
 if(dd<10){
     dd='0'+dd
 }
@@ -192,7 +199,9 @@ var today = mm+'/'+dd+'/'+yyyy;
           var date = new Date(json_Obj[j].start_date);
           var d = date.toDateString();
           nextEvent  += "<div class='eventItem'><div><b>" + d + "</b></div>";
-          nextEvent  += "<div>" + json_Obj[j].post_title + "</div></div>";
+          nextEvent  += "<div>" + json_Obj[j].post_title + "</div>";
+          nextEvent  += "</div>";
+          //nextEvent  += "<div>" + json_Obj[j].event_type + "</div></div>";
           x++;
         //}
       }
@@ -214,9 +223,29 @@ var today = mm+'/'+dd+'/'+yyyy;
     returnMessage = 'SUCCESS.';
 
       var out = "<ons-list>";
+          out += "<ons-list-header>Schedule of Events</ons-list-header>";
       var i;
       for(i = 0; i < json_Obj.length; i++) {
-          out += '<ons-list-item><span class="list__item__title">' + json_Obj[i].post_title + '</span>';
+        //console.log(json_Obj[i].event_type);
+          out += '<ons-list-item modifier="tappable" category="'+json_Obj[i].event_type+'">';
+
+          var icon='';
+          if (json_Obj[i].event_type=='slalom') icon='images/slalom.jpg';//'images/work.jpg'
+          else if (json_Obj[i].event_type=='3event') icon='images/3event.png';
+          else if (json_Obj[i].event_type=='meeting') icon='images/meeting.png';
+          else if (json_Obj[i].event_type=='work') icon='images/work.png';
+          else if (json_Obj[i].event_type=='clinic') icon='images/clinic.png';
+          else icon='images/null.png';
+
+          out += '<div class="left">';
+          //out += icon;
+          //out += '<img class="list__item__thumbnail" src="images/work.jpg">';
+          out += '<img class="list__item__thumbnail" src="' + icon + '">';
+          //console.log('<img class="list__item__thumbnail" src="'+icon+'">');
+          out += '</div>';
+
+          out += '<div class="center">';
+          out += '<span class="list__item__title">' + json_Obj[i].post_title + '</span>';
           out += '<span class="list__item__subtitle">' + json_Obj[i].start_date;
           //console.log(json_Obj[i].start_date + ' ' + json_Obj[i].end_date);
           //console.log(json_Obj[i].start_date.localeCompare(json_Obj[i].end_date ) );
@@ -229,7 +258,20 @@ var today = mm+'/'+dd+'/'+yyyy;
             //out += '</span>';
             //console.log("IS 0 " + json_Obj[i].start_date.localeCompare(json_Obj[i].end_date));
           }
-          out += ' <i>(' + json_Obj[i].start_time + ' - ' + json_Obj[i].end_time + ')</i></span></ons-list-item>';
+          out += ' <i>(' + json_Obj[i].start_time + ' - ' + json_Obj[i].end_time + ')</i></span>';
+          if (json_Obj[i].link != '' ) {
+            out += '<div><ons-button><a target="blank" style="text-decoration: none;color:#fff;" href="' + json_Obj[i].link + '">Register</a></ons-button></div>';
+          }
+          out += '</div>';
+          if (json_Obj[i].post_content != null) {
+            str=json_Obj[i].post_content;
+            //out += '<i>' + str.replace(/\[[^)]+\]/,"") + '</i><p>';
+            out += '<div style="display:none;">' + str.replace(/\[[^)]+\]/,"") + '</div>';
+          } else {
+            str='';
+          }
+
+          out += '</ons-list-item>';
           /*
           if (json_Obj[i].post_content != null) {
             str=json_Obj[i].post_content;
@@ -430,7 +472,7 @@ ajaxRequest.send(null);
       <div class="center">Page 2</div>
     </ons-toolbar>
 
-    <ons-list-header>Schedule of Events</ons-list-header>
+
 
       <div id='jsonReturnDiv'></div>
       <!--<div id='usaws_id_family0' class='rightCell'><button type="button" id='request_data'  data-mini='true' onclick="checkForExistingMember('700109164','#jsonReturnDiv',1)">Validate USAWS #</button>
@@ -445,6 +487,25 @@ ajaxRequest.send(null);
 
 
 <script>
+
+
+function checkConnection() {
+    var networkState = navigator.connection.type;
+
+    var states = {};
+    states[Connection.UNKNOWN]  = 'Unknown connection';
+    states[Connection.ETHERNET] = 'Ethernet connection';
+    states[Connection.WIFI]     = 'WiFi connection';
+    states[Connection.CELL_2G]  = 'Cell 2G connection';
+    states[Connection.CELL_3G]  = 'Cell 3G connection';
+    states[Connection.CELL_4G]  = 'Cell 4G connection';
+    states[Connection.CELL]     = 'Cell generic connection';
+    states[Connection.NONE]     = 'No network connection';
+
+    alert('Connection type: ' + states[networkState]);
+}
+
+checkConnection();
 
 
 
