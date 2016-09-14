@@ -32,33 +32,33 @@
   <preference name="UIWebViewDecelerationSpeed" value="normal"/>
   <preference name="monaca:AndroidIsPackageNameSeparate" value="false"/>
   <platform name="ios">
-    <icon src="/images/club_logo.png" width="114" height="114"/>
-    <icon src="/images/club_logo.png" width="72" height="72"/>
-    <icon src="/images/club_logo.png" width="144" height="144"/>
-    <icon src="/images/club_logo.png" width="60" height="60"/>
-    <icon src="/images/club_logo.png" width="120" height="120"/>
-    <icon src="/images/club_logo.png" width="180" height="180"/>
-    <icon src="/images/club_logo.png" width="76" height="76"/>
-    <icon src="/images/club_logo.png" width="152" height="152"/>
-    <icon src="/images/club_logo.png" width="40" height="40"/>
-    <icon src="/images/club_logo.png" width="80" height="80"/>
-    <icon src="/images/club_logo.png" width="50" height="50"/>
-    <icon src="/images/club_logo.png" width="100" height="100"/>
-    <icon src="/images/club_logo.png" width="29" height="29"/>
-    <icon src="/images/club_logo.png" width="58" height="58"/>
-    <icon src="/images/club_logo.png" width="87" height="87"/>
-    <icon src="/images/club_logo.png" width="167" height="167"/>
-    <splash src="/images/club_logo.png" width="320" height="480"/>
-    <splash src="/images/club_logo.png" width="640" height="960"/>
-    <splash src="/images/club_logo.png" width="640" height="1136"/>
-    <splash src="/images/club_logo.png" width="750" height="1334"/>
-    <splash src="/images/club_logo.png" width="1242" height="2208"/>
-    <splash src="/images/club_logo.png" width="2208" height="1242"/>
-    <splash src="/images/club_logo.png" width="768" height="1024"/>
-    <splash src="/images/club_logo.png" width="1024" height="768"/>
-    <splash src="/images/club_logo.png" width="1536" height="2048"/>
-    <splash src="/images/club_logo.png" width="2048" height="1536"/>
-    <icon src="/images/club_logo.png" width="57" height="57"/>
+    <icon src="images/club_logo.png" width="114" height="114"/>
+    <icon src="images/club_logo.png" width="72" height="72"/>
+    <icon src="images/club_logo.png" width="144" height="144"/>
+    <icon src="images/club_logo.png" width="60" height="60"/>
+    <icon src="images/club_logo.png" width="120" height="120"/>
+    <icon src="images/club_logo.png" width="180" height="180"/>
+    <icon src="images/club_logo.png" width="76" height="76"/>
+    <icon src="images/club_logo.png" width="152" height="152"/>
+    <icon src="images/club_logo.png" width="40" height="40"/>
+    <icon src="images/club_logo.png" width="80" height="80"/>
+    <icon src="images/club_logo.png" width="50" height="50"/>
+    <icon src="images/club_logo.png" width="100" height="100"/>
+    <icon src="images/club_logo.png" width="29" height="29"/>
+    <icon src="images/club_logo.png" width="58" height="58"/>
+    <icon src="images/club_logo.png" width="87" height="87"/>
+    <icon src="images/club_logo.png" width="167" height="167"/>
+    <splash src="images/club_logo.png" width="320" height="480"/>
+    <splash src="images/club_logo.png" width="640" height="960"/>
+    <splash src="images/club_logo.png" width="640" height="1136"/>
+    <splash src="images/club_logo.png" width="750" height="1334"/>
+    <splash src="images/club_logo.png" width="1242" height="2208"/>
+    <splash src="images/club_logo.png" width="2208" height="1242"/>
+    <splash src="images/club_logo.png" width="768" height="1024"/>
+    <splash src="images/club_logo.png" width="1024" height="768"/>
+    <splash src="images/club_logo.png" width="1536" height="2048"/>
+    <splash src="images/club_logo.png" width="2048" height="1536"/>
+    <icon src="images/club_logo.png" width="57" height="57"/>
     <config-file platform="ios" parent="CFBundleLocalizations" target="*-Info.plist">
       <array>
         <string>en</string>
