@@ -32,7 +32,7 @@
   <preference name="UIWebViewDecelerationSpeed" value="normal"/>
   <preference name="monaca:AndroidIsPackageNameSeparate" value="false"/>
   <platform name="ios">
-    <icon src="/res/ios/icon/icon@2x.png" width="114" height="114"/>
+    <icon src="images/club_logo.png" width="114" height="114"/>
     <icon src="/res/ios/icon/icon-72.png" width="72" height="72"/>
     <icon src="/res/ios/icon/icon-72@2x.png" width="144" height="144"/>
     <icon src="/res/ios/icon/icon-60.png" width="60" height="60"/>
