@@ -129,8 +129,9 @@
                         }
                         out += ' <i>(' + json_Obj[i].start_time + ' - ' + json_Obj[i].end_time + ')</i></span>';
                         if (json_Obj[i].link != '' ) {
-                          //out += '<div><ons-button><a href="#" style="text-decoration: none;color:#fff;" onclick="window.open(' + json_Obj[i].link + ', '_system')";>Register</a></ons-button></div>';
-                          out += '<div><ons-button><a target="blank" style="text-decoration: none;color:#fff;" href="' + json_Obj[i].link + '">Register</a></ons-button></div>';
+              out += '<div><ons-button><a href="#" style="text-decoration: none;color:#fff;" onclick="window.open(\'' + json_Obj[i].link + '\', \'_system\')";>Register</a></ons-button></div>';
+                          // BELOW WORK, displays events
+                          //out += '<div><ons-button><a target="blank" style="text-decoration: none;color:#fff;" href="' + json_Obj[i].link + '">Register</a></ons-button></div>';
 
                         }
                         out += '</div>';
