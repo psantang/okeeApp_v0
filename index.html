@@ -24,6 +24,7 @@
     <script>
 
     document.addEventListener("deviceready", onDeviceReady, false);
+
     function onDeviceReady() {
       /*
       var model = device.model;
@@ -128,7 +129,9 @@
                         }
                         out += ' <i>(' + json_Obj[i].start_time + ' - ' + json_Obj[i].end_time + ')</i></span>';
                         if (json_Obj[i].link != '' ) {
-                          out += '<div><ons-button><a href="#" style="text-decoration: none;color:#fff;" onclick="window.open(\'' + json_Obj[i].link + '\', '_system');">Register</a></ons-button></div>';
+                          //out += '<div><ons-button><a href="#" style="text-decoration: none;color:#fff;" onclick="window.open(' + json_Obj[i].link + ', '_system')";>Register</a></ons-button></div>';
+                          out += '<div><ons-button><a target="blank" style="text-decoration: none;color:#fff;" href="' + json_Obj[i].link + '">Register</a></ons-button></div>';
+
                         }
                         out += '</div>';
                         if (json_Obj[i].post_content != null) {
@@ -167,9 +170,12 @@
 
     if (navigator.connection.type.toLowerCase() != 'none') {
       onOnline();
+      console.log('online on init');
     } else {
       onOffline();
+      console.log('offline on init');
     }
+
 } // END onDeviceReady
 
 
@@ -183,7 +189,7 @@
 
         ons.ready(function() {
             console.log("Onsen UI is ready!!!!");
-
+            onOnline();
         });
 //}
 
